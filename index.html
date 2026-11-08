@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grolite Demo</title>
+<style>
+:root{
+  --bg:#0e1016;--panel:#171a23;--panel2:#1f2330;--line:#2a2f3c;--text:#eceff5;--muted:#9aa3b6;
+  --accent:#8c9cf2;--accent-ink:#10131c;--accent-soft:rgba(140,156,242,.14);
+  --good:#4cc38a;--bad:#ef6b7b;--warn:#f2b54c;
+  --c-read:#2c5f66;--c-check:#1f7a52;--c-self:#b44a5d;--c-try:#6b55c2;
+  --cream:#f7efe4;
+  --radius:16px;
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --bg:#f5f6fa;--panel:#ffffff;--panel2:#f0f2f8;--line:#e2e5ee;--text:#171a23;--muted:#5d6577;
+    --accent:#5466d8;--accent-ink:#ffffff;--accent-soft:rgba(84,102,216,.1);
+  }
+}
+:root[data-theme="light"]{
+  --bg:#f5f6fa;--panel:#ffffff;--panel2:#f0f2f8;--line:#e2e5ee;--text:#171a23;--muted:#5d6577;
+  --accent:#5466d8;--accent-ink:#ffffff;--accent-soft:rgba(84,102,216,.1);
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Inter,system-ui,-apple-system,Roboto,sans-serif;font-size:16px;line-height:1.55}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:var(--accent)}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+.side{background:var(--panel);border-right:1px solid var(--line);padding:22px 16px;display:flex;flex-direction:column;gap:6px;position:sticky;top:0;height:100vh}
+.brand{display:flex;align-items:center;justify-content:space-between;padding:0 8px 18px}
+.logo{font-weight:800;font-size:26px;color:var(--accent);letter-spacing:-.5px}
+.demo-tag{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:var(--accent-soft);color:var(--accent);padding:3px 8px;border-radius:99px}
+.nav{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:12px;border:0;background:none;text-align:left;color:var(--muted);font-weight:600}
+.nav:hover{background:var(--panel2);color:var(--text)}
+.nav.on{background:var(--accent-soft);color:var(--text)}
+.nav svg{width:20px;height:20px;flex:none}
+.side-foot{margin-top:auto;display:flex;flex-direction:column;gap:10px}
+.count-card{background:var(--panel2);border-radius:14px;padding:14px 16px}
+.count-card small{display:block;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.count-card b{font-size:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:12px;padding:12px 18px;font-weight:700;background:var(--accent);color:var(--accent-ink)}
+.btn:hover{filter:brightness(1.07)}
+.btn.ghost{background:var(--panel2);color:var(--text)}
+.btn.block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.main{min-width:0;padding:34px 40px 120px}
+.wrap{max-width:900px;margin:0 auto}
+h1{font-size:32px;line-height:1.2;margin:0 0 6px;letter-spacing:-.5px}
+h2{font-size:20px;margin:0 0 12px}
+.sub{color:var(--muted);margin:0 0 26px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.stack{display:flex;flex-direction:column;gap:16px}
+.eyebrow{font-size:12px;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;padding:4px 10px;border-radius:99px;background:var(--accent-soft);color:var(--accent)}
+.chip.muted{background:var(--panel2);color:var(--muted)}
+.hero{border-radius:20px;padding:30px;background:linear-gradient(120deg,#3b5a7a,#5e7f8f 55%,#7d8f9b);color:#fff;margin-bottom:22px}
+.hero h1{color:#fff}
+.hero p{margin:0;opacity:.92}
+.cont{display:grid;grid-template-columns:240px 1fr;gap:0;overflow:hidden;padding:0}
+.cont .art{background:var(--cream);display:flex;align-items:center;justify-content:center}
+.cont .body{padding:22px}
+.bar{height:8px;border-radius:99px;background:var(--panel2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .4s}
+.row{display:flex;align-items:center;gap:12px}
+.between{justify-content:space-between}
+.muted{color:var(--muted)}
+.small{font-size:14px}
+.warn-box{background:rgba(242,181,76,.1);border:1px solid rgba(242,181,76,.35);color:var(--warn);border-radius:12px;padding:12px 14px;font-weight:600}
+.good-box{background:rgba(76,195,138,.1);border:1px solid rgba(76,195,138,.35);color:var(--good);border-radius:12px;padding:12px 14px;font-weight:600}
+/* paper */
+.phase{padding:0;overflow:hidden}
+.phase-h{padding:18px 22px;display:flex;justify-content:space-between;gap:12px;cursor:pointer}
+.phase-h b{display:block}
+.ch{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 22px;border-top:1px solid var(--line)}
+.ch.live{cursor:pointer}
+.ch.live:hover{background:var(--panel2)}
+.dots{display:flex;gap:5px}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--good)}
+/* session list */
+.act{display:grid;grid-template-columns:150px 1fr auto;align-items:stretch;border-radius:14px;overflow:hidden;background:var(--panel);border:1px solid var(--line);cursor:pointer;min-height:84px}
+.act:hover{border-color:var(--accent)}
+.act .tag{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:18px;text-transform:lowercase}
+.act .tag span{font-weight:500;font-size:13px;opacity:.9}
+.act .t{padding:14px 18px;display:flex;align-items:center;font-weight:700;font-size:17px}
+.act .ck{display:flex;align-items:center;padding-right:20px}
+.ck-i{width:26px;height:26px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center}
+.ck-i.on{background:var(--good);border-color:var(--good);color:#0e1016}
+.t-read{background:var(--c-read)}.t-poll,.t-quiz{background:var(--c-check)}.t-explain,.t-recap{background:var(--c-self)}.t-try{background:var(--c-try)}
+/* player */
+.player{max-width:760px;margin:0 auto;position:relative}
+.p-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.p-card{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+.p-head{display:flex;justify-content:center;align-items:center;padding:14px;border-bottom:1px solid var(--line);font-weight:800;text-transform:lowercase;position:relative}
+.p-head .pill{color:#fff;padding:3px 12px;border-radius:99px;font-size:14px}
+.p-body{padding:28px 34px 34px}
+.illo{width:300px;max-width:100%;aspect-ratio:1/1;margin:0 auto 22px;border-radius:16px;background:var(--cream);display:flex;align-items:center;justify-content:center}
+.illo svg{width:86%;height:86%}
+.p-body h2{font-size:24px;margin-bottom:6px}
+.p-body p{font-size:17.5px;margin:0 0 14px}
+.p-body ul,.p-body ol{font-size:17.5px;padding-left:22px;margin:0 0 14px}
+.p-body li{margin-bottom:6px}
+.keyidea{border-left:4px solid var(--accent);background:var(--accent-soft);padding:12px 16px;border-radius:0 12px 12px 0;font-weight:600;margin:18px 0 0}
+.tip{border-left:4px solid var(--warn);background:rgba(242,181,76,.09);padding:12px 16px;border-radius:0 12px 12px 0;margin:14px 0 0;font-size:15.5px}
+.opt{display:block;width:100%;text-align:left;background:var(--panel2);border:2px solid transparent;border-radius:14px;padding:14px 16px;margin-bottom:10px;font-size:16px;position:relative;overflow:hidden}
+.opt:hover:not(:disabled){border-color:var(--accent)}
+.opt:disabled{cursor:default}
+.opt .fill{position:absolute;inset:0 auto 0 0;background:var(--accent-soft);transition:width .6s}
+.opt .lbl{position:relative;display:flex;justify-content:space-between;gap:12px}
+.opt.mine{border-color:var(--accent)}
+.opt.right{border-color:var(--good)}
+.opt.wrong{border-color:var(--bad)}
+.feedback{border-radius:12px;padding:14px 16px;margin-top:6px;font-size:15.5px}
+.feedback.ok{background:rgba(76,195,138,.12);border:1px solid rgba(76,195,138,.4)}
+.feedback.no{background:rgba(239,107,123,.1);border:1px solid rgba(239,107,123,.4)}
+.match-row{display:grid;grid-template-columns:1fr 220px 28px;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line)}
+select{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;width:100%}
+textarea,input[type=text],input[type=date]{background:var(--panel2);color:var(--text);border:1px solid var(--line);border-radius:12px;padding:14px;font:inherit;width:100%}
+textarea{min-height:120px;resize:vertical}
+.post{background:var(--panel2);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--c-read);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;flex:none}
+.like{border:0;background:none;color:var(--muted);font-size:14px;padding:4px 0}
+.like.on{color:var(--bad)}
+.tools{position:absolute;right:-78px;top:56px;display:flex;flex-direction:column;gap:12px}
+.tool{width:56px;height:56px;border-radius:50%;border:1px solid var(--line);background:var(--panel);display:flex;align-items:center;justify-content:center}
+.tool:hover,.tool.on{border-color:var(--accent);color:var(--accent)}
+.tool svg{width:24px;height:24px}
+.p-foot{position:fixed;left:260px;right:0;bottom:0;background:var(--bg);border-top:1px solid var(--line);padding:12px 20px 14px;z-index:5}
+.p-foot .inner{max-width:760px;margin:0 auto}
+.segs{display:flex;gap:6px;margin-top:10px}
+.segs i{flex:1;height:6px;border-radius:99px;background:var(--panel2)}
+.segs i.done{background:var(--accent);opacity:.55}
+.segs i.cur{background:var(--accent)}
+.navbtn{width:48px;height:48px;border-radius:50%;border:0;background:var(--panel2);display:flex;align-items:center;justify-content:center}
+.navbtn.primary{background:var(--accent);color:var(--accent-ink)}
+.navbtn:disabled{opacity:.35}
+/* drawer */
+.drawer{position:fixed;top:0;right:0;bottom:0;width:400px;max-width:100%;background:var(--panel);border-left:1px solid var(--line);z-index:20;padding:22px;display:flex;flex-direction:column;gap:14px;transform:translateX(100%);transition:transform .25s}
+.drawer.open{transform:none}
+.msg{padding:12px 14px;border-radius:14px;max-width:92%;font-size:15px}
+.msg.me{background:var(--accent);color:var(--accent-ink);align-self:flex-end}
+.msg.ai{background:var(--panel2);align-self:flex-start}
+.suggest{border:1px solid var(--line);background:none;border-radius:99px;padding:7px 12px;font-size:14px;text-align:left}
+.suggest:hover{border-color:var(--accent)}
+/* planner */
+.stat{font-size:30px;font-weight:800}
+.stepper{display:flex;align-items:center;gap:14px}
+.stepper button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--panel2);font-size:20px}
+.pchip{border:1px solid var(--line);background:var(--panel2);border-radius:99px;padding:8px 16px;font-weight:700;margin:0 8px 8px 0}
+.pchip.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.heat{display:grid;grid-template-rows:repeat(7,14px);grid-auto-flow:column;grid-auto-columns:14px;gap:4px;justify-content:center}
+.heat i{border-radius:3px;background:var(--panel2)}
+.heat i.l1{background:rgba(140,156,242,.3)}.heat i.l2{background:rgba(140,156,242,.55)}.heat i.l3{background:rgba(140,156,242,.8)}.heat i.l4{background:var(--accent)}
+.toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:12px 18px;border-radius:12px;font-weight:700;z-index:30;opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+.mobnav{display:none}
+.ws{position:relative;margin:0 0 14px}
+.ws-btn{width:100%;display:flex;align-items:center;gap:10px;background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;text-align:left}
+.ws-btn:hover{border-color:var(--accent)}
+.ws-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:9px;color:#fff;font-weight:800;font-size:14px;flex:none}
+.ws-name{flex:1;min-width:0}.ws-name b{display:block;font-size:15px}.ws-name small{display:block;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ws-menu{position:absolute;left:0;right:0;top:calc(100% + 6px);background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:8px;z-index:15;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+.ws-item{width:100%;display:flex;align-items:center;gap:10px;border:0;background:none;border-radius:10px;padding:9px 10px;text-align:left;font-weight:600;font-size:14.5px}
+.ws-item:hover,.ws-item.on{background:var(--panel2)}
+.ws-sep{height:1px;background:var(--line);margin:8px 0}
+.course-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.mob-ws{display:none}
+.log{border:1px solid var(--line);border-radius:16px;margin-top:12px;overflow:hidden;background:var(--panel)}
+.log-h{width:100%;display:grid;grid-template-columns:40px 1fr auto 28px;gap:14px;align-items:center;padding:16px 18px;border:0;background:none;text-align:left}
+.log-h:hover{background:var(--panel2)}
+.log-ic{width:36px;height:36px;border-radius:50%;border:2px solid var(--line);display:flex;align-items:center;justify-content:center}
+.log-ic.full{border-color:var(--good);color:var(--good)}
+.chev{transition:transform .2s;color:var(--muted)}
+.log.open .chev{transform:rotate(180deg)}
+.log-body{border-top:1px solid var(--line);padding:18px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.metric{background:var(--panel2);border-radius:14px;padding:14px 10px;text-align:center}
+.metric .mi{width:34px;height:34px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center}
+.metric .mi svg{width:18px;height:18px}
+.metric b{display:block;font-size:22px}
+.metric span{font-size:12.5px;color:var(--muted)}
+.li{display:grid;grid-template-columns:12px 84px 1fr;gap:12px;align-items:start;padding:10px 0;border-bottom:1px solid var(--line)}
+.li:last-child{border-bottom:0}
+.li .dot{width:10px;height:10px;border-radius:50%;background:var(--line);margin-top:7px}
+.li .dot.on{background:var(--good)}
+.li .tg{font-size:11.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#fff;border-radius:6px;padding:3px 6px;text-align:center}
+@media (max-width:820px){.metrics{grid-template-columns:repeat(2,1fr)}.li{grid-template-columns:12px 1fr}.li .tg{display:none}}
+@media (max-width:820px){.mob-ws{display:block}}
+@media (max-width:1100px){.tools{position:static;flex-direction:row;justify-content:center;margin-bottom:12px}.tool{width:46px;height:46px}}
+@media (max-width:820px){
+  .app{grid-template-columns:1fr}
+  .side{display:none}
+  .main{padding:20px 16px 150px}
+  .grid2,.grid3{grid-template-columns:1fr}
+  .cont{grid-template-columns:1fr}
+  .cont .art{height:180px}
+  .act{grid-template-columns:96px 1fr auto}
+  .act .tag{font-size:15px}
+  .p-body{padding:22px 18px 26px}
+  .p-foot{left:0;bottom:62px}
+  .match-row{grid-template-columns:1fr 26px}
+  .match-row select{grid-column:1/2}
+  .mobnav{display:flex;position:fixed;left:0;right:0;bottom:0;height:62px;background:var(--panel);border-top:1px solid var(--line);z-index:6;justify-content:space-around;align-items:center}
+  .mobnav button{border:0;background:none;color:var(--muted);font-size:11px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:2px}
+  .mobnav button.on{color:var(--accent)}
+  .mobnav svg{width:22px;height:22px}
+  h1{font-size:26px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="side" id="side"></aside>
+  <main class="main" id="main"></main>
+</div>
+<nav class="mobnav" id="mobnav"></nav>
+<div class="drawer" id="drawer"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- storage ---------------- */
+const KEY='grolite-demo-v1';
+const DEFAULT=()=>({done:{},poll:null,quiz:{},match:null,posts:[],likes:{},notes:'',
+  plan:{exam:null,hours:6.5,days:6,pace:'Average',papers:['AAAF','CS']},theme:null,finished:false,minutes:0,ws:'AAAF'});
+let S;
+try{S=Object.assign(DEFAULT(),JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){S=DEFAULT()}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const today=new Date();today.setHours(0,0,0,0);
+if(!S.plan.exam){const d=new Date(today);d.setDate(d.getDate()+27);S.plan.exam=d.toISOString().slice(0,10)}
+if(S.theme)document.documentElement.dataset.theme=S.theme;
+
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function daysLeft(){return Math.max(0,Math.round((new Date(S.plan.exam)-today)/864e5))}
+const LEARNER='Seun';
+function greet(){return 'Good evening'} // fixed for the evening demo
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('show'),2200)}
+
+/* ---------------- icons ---------------- */
+const I={
+home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+book:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 5h7a3 3 0 0 1 3 3v12a2 2 0 0 0-2-2H2zM22 5h-7a3 3 0 0 0-3 3v12a2 2 0 0 1 2-2h8z"/></svg>',
+plan:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M8 13h3M8 17h6"/></svg>',
+chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>',
+gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>',
+spark:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></svg>',
+left:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M15 18l-6-6 6-6"/></svg>',
+right:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>',
+check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2"><path d="M5 12l5 5L20 7"/></svg>',
+x:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+play:'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+lock:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+sun:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+};
+
+/* ---------------- illustrations (warm, consistent style) ---------------- */
+const P={peach:'#f0a984',sage:'#9cc3a4',teal:'#5f9ea3',navy:'#3d4f73',gold:'#e8c06a',rose:'#e08a8f',ink:'#4a4038',paper:'#fffaf2'};
+const ILLO={
+cover:`<svg viewBox="0 0 200 200"><rect x="30" y="140" width="40" height="30" rx="4" fill="${P.peach}"/><rect x="70" y="115" width="40" height="55" rx="4" fill="${P.gold}"/><rect x="110" y="90" width="40" height="80" rx="4" fill="${P.sage}"/><rect x="150" y="62" width="30" height="108" rx="4" fill="${P.teal}"/><path d="M165 62V32" stroke="${P.ink}" stroke-width="3"/><path d="M165 32l22 8-22 8z" fill="${P.rose}"/><rect x="40" y="70" width="58" height="42" rx="6" fill="${P.paper}" stroke="${P.navy}" stroke-width="3"/><path d="M50 84h38M50 94h28" stroke="${P.navy}" stroke-width="3" stroke-linecap="round"/><circle cx="96" cy="104" r="14" fill="${P.good||'#5fb88a'}"/><path d="M89 104l5 5 9-10" stroke="#fff" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>`,
+poll:`<svg viewBox="0 0 200 200"><rect x="20" y="150" width="160" height="10" rx="5" fill="${P.ink}" opacity=".15"/><rect x="50" y="80" width="80" height="70" rx="8" fill="${P.gold}"/><rect x="68" y="78" width="44" height="7" rx="3" fill="${P.ink}" opacity=".5"/><rect x="72" y="40" width="36" height="46" rx="4" fill="${P.paper}" stroke="${P.navy}" stroke-width="3"/><path d="M80 56l6 6 12-12" stroke="${P.teal}" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="150" cy="70" r="10" fill="${P.rose}"/><circle cx="160" cy="105" r="7" fill="${P.sage}"/><circle cx="35" cy="60" r="8" fill="${P.teal}"/></svg>`,
+car:`<svg viewBox="0 0 200 200"><rect x="15" y="150" width="170" height="8" rx="4" fill="${P.ink}" opacity=".15"/><path d="M28 125l14-30a10 10 0 0 1 9-6h58a10 10 0 0 1 9 5l16 31h18a8 8 0 0 1 8 8v12H24v-12a8 8 0 0 1 4-8z" fill="${P.teal}"/><path d="M52 98h22v22H44zM82 98h26l10 22H82z" fill="${P.paper}" opacity=".9"/><circle cx="60" cy="148" r="14" fill="${P.navy}"/><circle cx="135" cy="148" r="14" fill="${P.navy}"/><circle cx="60" cy="148" r="5" fill="${P.paper}"/><circle cx="135" cy="148" r="5" fill="${P.paper}"/><circle cx="150" cy="62" r="26" fill="${P.paper}" stroke="${P.peach}" stroke-width="7"/><path d="M168 82l18 18" stroke="${P.peach}" stroke-width="9" stroke-linecap="round"/><path d="M139 62l8 8 14-15" stroke="${P.sage}" stroke-width="5" fill="none" stroke-linecap="round"/></svg>`,
+owners:`<svg viewBox="0 0 200 200"><rect x="15" y="160" width="170" height="8" rx="4" fill="${P.ink}" opacity=".15"/><rect x="70" y="50" width="60" height="110" rx="4" fill="${P.navy}"/><g fill="${P.gold}"><rect x="80" y="62" width="12" height="12"/><rect x="108" y="62" width="12" height="12"/><rect x="80" y="86" width="12" height="12"/><rect x="108" y="86" width="12" height="12"/><rect x="80" y="110" width="12" height="12"/><rect x="108" y="110" width="12" height="12"/></g><rect x="92" y="136" width="16" height="24" fill="${P.paper}"/><circle cx="35" cy="110" r="11" fill="${P.peach}"/><rect x="24" y="124" width="22" height="36" rx="10" fill="${P.rose}"/><text x="35" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="${P.ink}" font-family="sans-serif">OWN</text><circle cx="165" cy="110" r="11" fill="${P.peach}"/><rect x="154" y="124" width="22" height="36" rx="10" fill="${P.teal}"/><rect x="172" y="138" width="14" height="11" rx="2" fill="${P.ink}"/><text x="165" y="100" text-anchor="middle" font-size="12" font-weight="700" fill="${P.ink}" font-family="sans-serif">RUN</text></svg>`,
+triangle:`<svg viewBox="0 0 200 200"><path d="M100 45L40 150h120z" fill="none" stroke="${P.ink}" stroke-width="3" stroke-dasharray="6 6" opacity=".4"/><circle cx="100" cy="45" r="24" fill="${P.teal}"/><circle cx="40" cy="150" r="24" fill="${P.peach}"/><circle cx="160" cy="150" r="24" fill="${P.sage}"/><text x="100" y="50" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="sans-serif">AUDITOR</text><text x="40" y="155" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="sans-serif">MGMT</text><text x="160" y="155" text-anchor="middle" font-size="11" font-weight="800" fill="#fff" font-family="sans-serif">USERS</text><rect x="82" y="100" width="36" height="44" rx="4" fill="${P.paper}" stroke="${P.navy}" stroke-width="3"/><path d="M90 114h20M90 124h14" stroke="${P.navy}" stroke-width="3" stroke-linecap="round"/></svg>`,
+puzzle:`<svg viewBox="0 0 200 200"><rect x="30" y="40" width="64" height="54" rx="8" fill="${P.teal}"/><rect x="104" y="40" width="64" height="54" rx="8" fill="${P.gold}"/><rect x="30" y="104" width="64" height="54" rx="8" fill="${P.peach}"/><rect x="104" y="104" width="64" height="54" rx="8" fill="${P.sage}" stroke="${P.ink}" stroke-width="3" stroke-dasharray="6 5"/><circle cx="136" cy="131" r="12" fill="${P.paper}"/><path d="M130 131l5 5 8-9" stroke="${P.sage}" stroke-width="3.5" fill="none" stroke-linecap="round"/></svg>`,
+beyond:`<svg viewBox="0 0 200 200"><rect x="40" y="40" width="80" height="104" rx="6" fill="${P.paper}" stroke="${P.navy}" stroke-width="3"/><path d="M52 60h56M52 72h44M52 84h50" stroke="${P.navy}" stroke-width="3" stroke-linecap="round"/><rect x="52" y="100" width="12" height="30" fill="${P.teal}"/><rect x="70" y="112" width="12" height="18" fill="${P.gold}"/><rect x="88" y="94" width="12" height="36" fill="${P.peach}"/><rect x="95" y="70" width="70" height="90" rx="6" fill="${P.paper}" stroke="${P.sage}" stroke-width="3"/><path d="M130 100c-14 10-12 30 0 34 12-4 14-24 0-34z" fill="${P.sage}"/><path d="M130 104v30" stroke="${P.paper}" stroke-width="2"/></svg>`,
+bulb:`<svg viewBox="0 0 200 200"><circle cx="100" cy="85" r="44" fill="${P.gold}"/><rect x="82" y="126" width="36" height="16" rx="4" fill="${P.navy}"/><rect x="86" y="146" width="28" height="10" rx="4" fill="${P.navy}"/><path d="M88 92l12-20 12 20" stroke="${P.paper}" stroke-width="5" fill="none" stroke-linecap="round"/><g stroke="${P.peach}" stroke-width="5" stroke-linecap="round"><path d="M100 20v12M40 85h12M148 85h12M57 42l8 8M143 42l-8 8"/></g></svg>`,
+speak:`<svg viewBox="0 0 200 200"><rect x="28" y="40" width="110" height="70" rx="16" fill="${P.rose}"/><path d="M50 110l-6 22 26-22z" fill="${P.rose}"/><path d="M48 66h70M48 84h50" stroke="${P.paper}" stroke-width="5" stroke-linecap="round"/><rect x="80" y="100" width="96" height="58" rx="16" fill="${P.teal}"/><path d="M156 158l8 18-24-18z" fill="${P.teal}"/><circle cx="108" cy="129" r="5" fill="${P.paper}"/><circle cx="128" cy="129" r="5" fill="${P.paper}"/><circle cx="148" cy="129" r="5" fill="${P.paper}"/></svg>`,
+flag:`<svg viewBox="0 0 200 200"><rect x="20" y="150" width="40" height="22" rx="4" fill="${P.peach}"/><rect x="60" y="128" width="40" height="44" rx="4" fill="${P.gold}"/><rect x="100" y="104" width="40" height="68" rx="4" fill="${P.sage}"/><rect x="140" y="80" width="40" height="92" rx="4" fill="${P.teal}"/><path d="M160 80V30" stroke="${P.ink}" stroke-width="3"/><path d="M160 30l26 10-26 10z" fill="${P.rose}"/><circle cx="60" cy="70" r="6" fill="${P.gold}"/><circle cx="90" cy="45" r="4" fill="${P.rose}"/><circle cx="35" cy="100" r="5" fill="${P.sage}"/></svg>`
+};
+const illo=k=>`<div class="illo">${ILLO[k]}</div>`;
+
+/* ---------------- course data ---------------- */
+const PAPERS={
+AAAF:{code:'AAAF',name:'Advanced Audit, Assurance and Forensics',hours:96.5,phases:[
+ {title:'The Foundation: Understanding the Audit Environment',comp:'Competencies A (20%) + B (15%)',time:'Study 13h · Practice 8h · Revision 4.5h',ch:['Meaning of Audit and Assurance','Laws and Regulations on Audit and Assurance','Professional and Ethical Issues','Professional Responsibility and Liability','Quality Management for Professional Firms']},
+ {title:'Performing the Audit: From Planning to Evidence',comp:'Competency C (30%)',time:'Study 18h · Practice 13h · Revision 6.5h',ch:['The Audit Approach','Planning for Audit','Audit Evidence','Evaluation and Review','Group Audits']},
+ {title:'Forming Conclusions and Communicating Them',comp:'Competency D (20%)',time:'Study 11.5h · Practice 7.5h · Revision 4.5h',ch:['Audit-related Services','Assurance Services','Internal Audit and Outsourcing','Reporting']},
+ {title:'Evolving Technology and a Changing Profession',comp:'Competencies E (10%) + F (5%)',time:'Study 5h · Practice 3h · Revision 2h',ch:['Current Issues','Emerging Techniques in Audit']}
+]},
+CS:{code:'CS',name:'Case Study',hours:87,phases:[]},
+SFM:{code:'SFM',name:'Strategic Financial Management',hours:110,phases:[]},
+SBR:{code:'SBR',name:'Strategic Business Reporting',hours:115,phases:[]},
+ATAX:{code:'ATAX',name:'Advanced Taxation',hours:105,phases:[]},
+FR:{code:'FR',name:'Financial Reporting (Skills level)',hours:90,phases:[]},
+TAX:{code:'TAX',name:'Taxation (Skills level)',hours:85,phases:[]}
+};
+const COLORS={AAAF:'#2c5f66',CS:'#6b55c2',SFM:'#1f7a52',SBR:'#b44a5d',ATAX:'#8a6d2b',FR:'#3d4f73',TAX:'#a2563a'};
+const badge=(c,s=30)=>`<span class="ws-badge" style="background:${COLORS[c]};width:${s}px;height:${s}px">${c[0]}</span>`;
+let wsOpen=false;
+function wsSwitch(){const c=S.ws;
+ return `<div class="ws"><button class="ws-btn" data-wsmenu>${badge(c)}<span class="ws-name"><b>${c}</b><small>${PAPERS[c].name}</small></span><span class="muted">▾</span></button>
+ ${wsOpen?`<div class="ws-menu"><div class="eyebrow" style="padding:6px 10px">Learner workspaces</div>
+ ${S.plan.papers.map(p=>`<button class="ws-item ${p===c?'on':''}" data-ws="${p}">${badge(p,26)}<span>${PAPERS[p].name}</span></button>`).join('')}
+ <div class="ws-sep"></div><button class="btn block" data-addcourse>+ Add a course</button></div>`:''}</div>`}
+
+const ELEMENTS=['Practitioner','Responsible party','Intended user','Subject matter','Suitable criteria','Sufficient & appropriate evidence','Assurance report'];
+const MATCH=[
+ ['Okafor & Co. Chartered Accountants, who carry out the audit','Practitioner'],
+ ['The directors of Adire Fabrics Ltd, who prepared the accounts','Responsible party'],
+ ['The 200 shareholders who will rely on the accounts','Intended user'],
+ ['Adire Fabrics’ financial statements for the year','Subject matter'],
+ ['IFRS, the framework the accounts must follow','Suitable criteria'],
+ ['Bank confirmations, invoices and inventory counts','Sufficient & appropriate evidence'],
+ ['The auditor’s written opinion','Assurance report']
+];
+
+const POLL={q:'Before we start: what do you think an audit is mainly for?',
+ opts:['Catching fraud and theft in the company','Giving an independent opinion on whether the accounts are fair','Checking that the company paid the right tax','Confirming that the company made a profit'],
+ base:[24,19,8,7]};
+
+const QUIZ={
+q1:{q:'Why don’t shareholders simply accept the financial statements their directors prepare?',
+ opts:[
+  ['Because directors are reporting on their own stewardship, so owners need an independent opinion to add credibility.',true,'Correct. Shareholders own the company but directors run it and prepare the report on how they did. An independent opinion adds credibility.'],
+  ['Because the audit guarantees there is no fraud in the company.',false,'Not quite. An audit gives a high level of assurance, not a guarantee. Detecting fraud is not its primary purpose (you’ll see this again in Chapter 4).'],
+  ['Because the auditor needs to calculate the company’s tax.',false,'Not quite. Tax work is a separate service. The audit is about an independent opinion on the financial statements.'],
+  ['Because directors are not allowed to prepare financial statements.',false,'Not quite. Directors are the ones who prepare the financial statements. The auditor gives an opinion on them.']]},
+q2:{q:'A small business owner asks your firm to prepare their financial statements from their own records. They are not asking for an audit. What type of engagement is this?',
+ opts:[
+  ['Statutory audit',false,'Not quite. In an audit, someone else prepares the information and the auditor gives an opinion on it.'],
+  ['Review of data',false,'Not quite. A review checks information that someone else has already prepared.'],
+  ['Agreed-upon procedures',false,'Not quite. In agreed-upon procedures, the client chooses the checks and the practitioner reports what they found.'],
+  ['Compilation',true,'Correct. In a compilation, the practitioner prepares the information themselves, for example financial statements or a tax computation.']]}
+};
+
+const SAMPLE_POSTS=[
+ {id:'s1',name:'Chiamaka O.',init:'CO',when:'2 hours ago',likes:6,text:'Because the directors are reporting on their own work. The shareholders own the company but don’t run it, so they need someone independent to say whether the accounts are fair.'},
+ {id:'s2',name:'Ibrahim S.',init:'IS',when:'5 hours ago',likes:4,text:'Same reason you take your own mechanic before buying a used car. You don’t just trust the seller.'},
+ {id:'s3',name:'Funmi A.',init:'FA',when:'yesterday',likes:2,text:'The audit adds credibility. Banks also ask for audited accounts before they lend money, so it helps the company too.'}
+];
+
+const SESSION={id:'aaaf-ch1-s1',paper:'AAAF',chapter:'Ch 1: Meaning of Audit and Assurance',title:'What Is Assurance?',
+ outcome:'Learn what assurance means, why audits exist, and the five elements every assurance engagement must have. You will be able to explain them in your own words and spot each one in an exam scenario.',
+ acts:[
+ {type:'poll',min:2,title:'Poll: What Is an Audit For?',illo:'poll'},
+ {type:'read',min:2,title:'Assurance: Someone Checks It for You',illo:'car'},
+ {type:'read',min:3,title:'Why Audits Exist',illo:'owners'},
+ {type:'quiz',min:2,title:'Quiz: Why Not Just Trust the Directors?',illo:'bulb',key:'q1'},
+ {type:'read',min:3,title:'The 5 Elements of an Assurance Engagement',illo:'triangle'},
+ {type:'try',min:4,title:'Try It: Spot the Elements at Adire Fabrics',illo:'puzzle'},
+ {type:'read',min:2,title:'Beyond the Statutory Audit',illo:'beyond'},
+ {type:'quiz',min:2,title:'Quiz: Name That Engagement',illo:'bulb',key:'q2'},
+ {type:'explain',min:3,title:'Explain It: Why Pay for an Auditor?',illo:'speak'},
+ {type:'recap',min:2,title:'Key Takeaways and What Comes Next',illo:'flag'}
+ ]};
+const TAGNAME={read:'read',poll:'poll',quiz:'quiz',try:'try it',explain:'explain',recap:'recap'};
+const sessMin=SESSION.acts.reduce((a,b)=>a+b.min,0);
+const doneCount=()=>SESSION.acts.filter((_,i)=>S.done[i]).length;
+const sessPct=()=>Math.round(doneCount()/SESSION.acts.length*100);
+
+/* readiness model */
+function chapterStatus(){ // for Ch1 only (others 0 in demo)
+ const read=[1,2,4,6].every(i=>S.done[i]);
+ const practice=S.quiz.q1!=null&&S.quiz.q2!=null&&S.match!=null;
+ return {read,practice,revision:false};
+}
+function quizScore(){let c=0,t=0;['q1','q2'].forEach(k=>{if(S.quiz[k]!=null){t++;if(QUIZ[k].opts[S.quiz[k]][1])c++}});
+ if(S.match){t++;c+=S.match.correct/MATCH.length}
+ return t?Math.round(c/t*100):null}
+function paperTracks(code){
+ if(code!=='AAAF')return {read:code==='CS'?30:0,practice:code==='CS'?30:0,revision:0};
+ const st=chapterStatus();const n=16;
+ return {read:Math.round((st.read?1:0)/n*100),practice:Math.round((st.practice?1:0)/n*100),revision:0};
+}
+function planNumbers(){
+ const pace={Fast:.85,Average:1,'Takes time':1.2}[S.plan.pace];
+ let req=S.plan.papers.reduce((a,c)=>a+PAPERS[c].hours,0)*pace;
+ const doneH=(S.minutes||0)/60;req=Math.max(0,req-doneH);
+ const studyDays=Math.floor(daysLeft()*S.plan.days/7);
+ const avail=studyDays*S.plan.hours;
+ const short=Math.max(0,req-avail);
+ const need=studyDays?req/studyDays:0;
+ return {req:+req.toFixed(1),avail:+avail.toFixed(1),short:+short.toFixed(1),need:+need.toFixed(1),studyDays,ready:req?Math.min(100,Math.round(avail/req*100)):100};
+}
+
+/* ---------------- routing ---------------- */
+let route='home',step=0;
+function go(r,s){route=r;if(s!=null)step=s;stopSpeech();closeDrawer();render();window.scrollTo(0,0)}
+
+function sideHTML(){
+ const items=[['home','Home',I.home],['paper','Course',I.book],['planner','Study Plan',I.plan],['progress','Progress',I.chart],['settings','Settings',I.gear]];
+ const active=r=>(route===r||(r==='paper'&&['session','play'].includes(route)))?'on':'';
+ return `<div class="brand"><span class="logo">grolite</span><span class="demo-tag">Demo</span></div>
+ ${wsSwitch()}
+ ${items.map(([r,l,ic])=>`<button class="nav ${active(r)}" data-go="${r}">${ic}${l}</button>`).join('')}
+ <div class="side-foot"><div class="count-card"><small>Exam starts in</small><b>${daysLeft()} days</b><div class="small muted">${new Date(S.plan.exam).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}</div></div>
+ <button class="btn block" data-go="continue">${I.play} Continue learning</button></div>`;
+}
+function mobHTML(){
+ const items=[['home','Home',I.home],['paper','Learn',I.book],['planner','Plan',I.plan],['progress','Progress',I.chart],['settings','More',I.gear]];
+ return items.map(([r,l,ic])=>`<button class="${(route===r||(r==='paper'&&['session','play'].includes(route)))?'on':''}" data-go="${r}">${ic}${l}</button>`).join('');
+}
+
+/* ---------------- views ---------------- */
+function vHome(){
+ const pn=planNumbers();const pct=sessPct();
+ const next=S.finished?'Ch 1 Session 2: Past Questions (coming in full product)':`${SESSION.chapter} · ${SESSION.title}`;
+ const c=S.ws;
+ const other=`<div class="card cont" style="margin-bottom:16px"><div class="art">${ILLO.flag.replace('<svg','<svg width="170" height="170"')}</div>
+  <div class="body"><div class="eyebrow">Your ${c} workspace</div><h2 style="margin:10px 0 6px">${PAPERS[c].name}</h2>
+  <p class="small muted" style="margin:0 0 14px">Lessons for this course aren’t in the demo yet. In the full product, its chapters appear here as short sessions, just like AAAF. Your Study Plan already counts its hours.</p>
+  <div class="row" style="gap:10px;flex-wrap:wrap"><button class="btn" data-ws="AAAF">Switch to AAAF (live demo)</button><button class="btn ghost" data-go="planner">View Study Plan</button></div></div></div>`;
+ return `<div class="wrap">
+ <div class="hero"><h1>${greet()}, ${LEARNER}</h1><p>Here’s what to focus on today in ${esc(PAPERS[c].name)}. Your exam is in ${daysLeft()} days.</p></div>
+ ${c!=='AAAF'?other:`<div class="card cont" style="margin-bottom:16px"><div class="art">${ILLO.cover.replace('<svg','<svg width="170" height="170"')}</div>
+  <div class="body"><div class="eyebrow">Continue where you left off</div>
+  <div class="chip" style="margin:10px 0 6px">AAAF · Competency A · 20% of marks</div>
+  <h2 style="margin:6px 0 4px">${esc(next)}</h2>
+  <div class="small muted" style="margin-bottom:14px">${SESSION.acts.length} short activities · about ${sessMin} min</div>
+  <div class="row" style="margin-bottom:16px"><div class="bar" style="flex:1"><i style="width:${pct}%"></i></div><b class="small">${pct}%</b></div>
+  <button class="btn" data-go="continue">${I.play} ${pct?'Continue session':'Start session'}</button></div></div>`}
+ <div class="grid2">
+  <div class="card"><div class="eyebrow">Today’s plan</div>
+   <div class="stat" style="margin:8px 0 2px">${S.plan.hours}h</div><div class="small muted">daily target from your Study Plan</div>
+   <div style="margin-top:14px" class="${pn.short?'warn-box':'good-box'} small">${pn.short?`At this pace you’ll cover ${pn.ready}% of the work by exam day.`:'You’re on track to cover all your papers.'}</div>
+   <button class="btn ghost" style="margin-top:14px" data-go="planner">Open Study Plan</button></div>
+  <div class="card"><div class="eyebrow">Other learners</div>
+   <p class="small" style="margin:10px 0">58 students preparing for the AAAF sitting are learning with you.</p>
+   ${SAMPLE_POSTS.slice(0,2).map(p=>`<div class="row" style="align-items:flex-start;margin-bottom:10px"><div class="avatar">${p.init}</div><div class="small"><b>${p.name}</b><div class="muted">${esc(p.text.slice(0,80))}…</div></div></div>`).join('')}
+  </div>
+ </div></div>`;
+}
+
+function vPaper(){
+ const c=S.ws;const p=PAPERS[c];const st=chapterStatus();const t=paperTracks(c);
+ const tracks=`<div class="card" style="margin-bottom:24px"><div class="eyebrow" style="margin-bottom:10px">Readiness</div>${['read','practice','revision'].map(k=>`<div class="row small" style="margin-bottom:6px"><span style="width:70px" class="muted">${k[0].toUpperCase()+k.slice(1)}</span><div class="bar" style="flex:1"><i style="width:${t[k]}%"></i></div><b style="width:36px;text-align:right">${t[k]}%</b></div>`).join('')}</div>`;
+ const head=`<div class="row" style="margin-bottom:8px">${badge(c,44)}<div><div class="eyebrow" style="color:var(--accent)">${c} workspace</div><h1 style="margin:0">${p.name}</h1></div></div><p class="sub">Learn each chapter inside Grolite, one short session at a time.</p>`;
+ if(c!=='AAAF')return `<div class="wrap">${head}${tracks}<div class="card" style="text-align:center;padding:36px">${illo('beyond')}<h2>Lessons coming in the full product</h2><p class="muted" style="max-width:480px;margin:0 auto 18px">In the demo, only AAAF Chapter 1 has lessons. Every course you sign up for gets its own workspace like this one.</p><button class="btn" data-ws="AAAF">Go to AAAF workspace</button></div></div>`;
+ return `<div class="wrap">${head}${tracks}
+ <div class="row between" style="margin-bottom:12px"><h2 style="margin:0">Phases &amp; chapters</h2><span class="chip muted">Demo: Chapter 1 is live</span></div>
+ <div class="stack">${p.phases.map((ph,pi)=>`<div class="card phase"><div class="phase-h"><div><b>Phase ${pi+1} · ${ph.title}</b><span class="small muted">${ph.comp} · ${ph.time}</span></div><span class="small muted">${pi===0&&st.read?1:0}/${ph.ch.length}</span></div>
+  ${ph.ch.map((c,ci)=>{const live=pi===0&&ci===0;const n=pi===0?ci+1:[5,10,14][pi-1]+ci+1;
+   return `<div class="ch ${live?'live':''}" ${live?'data-go="session"':''}><div><b class="small" style="font-size:15.5px">Ch ${n}: ${c}</b>${live?`<div class="small muted">Session 1: ${SESSION.title} · ${sessMin} min</div>`:''}</div>
+   <div class="row">${live?`<div class="dots"><i class="${st.read?'on':''}"></i><i class="${st.practice?'on':''}"></i><i></i></div><span class="chip">${sessPct()}%</span>`:`<span class="muted">${I.lock}</span>`}</div></div>`}).join('')}</div>`).join('')}</div></div>`;
+}
+
+function vSession(){
+ return `<div class="wrap" style="max-width:820px">
+ <button class="btn ghost" data-go="paper" style="margin-bottom:18px">${I.left} Course</button>
+ <div class="card" style="text-align:center;margin-bottom:16px;padding:30px">
+  <div class="eyebrow">AAAF · ${SESSION.chapter} · Session 1</div>
+  <h1 style="margin:8px 0 18px">${SESSION.title}</h1>
+  <div class="illo" style="width:220px">${ILLO.car}</div>
+  <p style="text-align:left;font-size:17px;margin:0 0 8px">${greet()} ${LEARNER},</p>
+  <p style="text-align:left;font-size:17px;margin:0">${SESSION.outcome}</p>
+  <div class="row" style="justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap"><span class="chip">Competency A · 20% of marks</span><span class="chip muted">${SESSION.acts.length} activities · ${sessMin} min</span></div>
+ </div>
+ <div class="stack">${SESSION.acts.map((a,i)=>`<div class="act" data-play="${i}"><div class="tag t-${a.type}">${TAGNAME[a.type]}<span>${a.min} min</span></div><div class="t">${a.title}</div><div class="ck"><span class="ck-i ${S.done[i]?'on':''}">${S.done[i]?I.check:''}</span></div></div>`).join('')}</div>
+ </div>`;
+}
+
+/* ---------- activity renderers ---------- */
+function actBody(a,i){
+ const h=`${illo(a.illo)}<h2>${a.title}</h2>`;
+ switch(i){
+ case 0:{const voted=S.poll!=null;const counts=POLL.base.map((c,k)=>c+(S.poll===k?1:0));const tot=counts.reduce((x,y)=>x+y,0);
+  return `${h}<p>There’s no wrong answer here. Pick the one closest to what you believe right now. You’ll see how the rest of the cohort voted.</p><p><b>${POLL.q}</b></p>
+  ${POLL.opts.map((o,k)=>{const p=Math.round(counts[k]/tot*100);return `<button class="opt ${voted&&S.poll===k?'mine':''}" ${voted?'disabled':''} data-poll="${k}"><span class="fill" style="width:${voted?p:0}%"></span><span class="lbl"><span>${o}</span>${voted?`<b>${p}%</b>`:''}</span></button>`}).join('')}
+  ${voted?`<p class="small muted" style="text-align:center">Answered by ${tot} learners in the AAAF cohort. Keep your answer in mind: the next activities will show you which one is right.</p>`:''}`;}
+ case 1:return `${h}<p>Imagine you’re buying a used car in Lagos. The seller says it’s in perfect condition. Do you just believe him? Most people bring their own mechanic to check it first. 🔧</p>
+  <p>That mechanic gives you <b>assurance</b>: comfort that what someone else told you can be trusted.</p>
+  <p>In professional terms, in an <b>assurance engagement</b> a practitioner:</p>
+  <ol><li><b>is engaged by one party</b> (you hired the mechanic)</li><li><b>to give an opinion</b> (the mechanic’s verdict)</li><li><b>on information prepared by another party</b> (the seller’s claims about the car)</li></ol>
+  <p>The opinion is an expression of assurance, or comfort, about the information that has been reviewed.</p>
+  <div class="keyidea">Key idea: assurance is an independent opinion that adds comfort to information someone else prepared.</div>`;
+ case 2:return `${h}<p>In most companies, the owners and the managers are different people. 🏢</p>
+  <ul><li><b>Shareholders own</b> the company. This is <i>ownership</i>.</li><li><b>Directors run</b> it on their behalf. This is <i>stewardship</i>.</li></ul>
+  <p>At year end, the directors prepare the financial statements: a report on how they managed the owners’ money. Would you accept a report card written by the student himself?</p>
+  <p>That’s why shareholders don’t accept the financial statements without question. A <b>statutory audit</b> adds credibility: an independent auditor examines the statements and expresses an opinion.</p>
+  <p>The opinion answers one question: are the financial statements prepared, <b>in all material respects</b>, in accordance with an applicable financial reporting framework such as IFRS?</p>
+  <p>An audit is designed to give a <b>high level of assurance</b> to users of financial information. High, but not absolute.</p>
+  <div class="keyidea">Key idea: audits exist because ownership (shareholders) and stewardship (directors) are separate.</div>`;
+ case 4:return `${h}<p>Every assurance engagement, including an audit, has the same five elements. Here’s a memory hook: <b>3 people, 3 S’s, 1 report.</b></p>
+  <ol><li><b>A three-party relationship</b>
+   <ul><li><b>Practitioner:</b> the auditor or chartered accountant giving the opinion</li><li><b>Responsible party:</b> management or directors, who prepared the information</li><li><b>Intended user:</b> shareholders and others who rely on it</li></ul></li>
+  <li><b>Subject matter:</b> what is being checked, such as the financial statements</li>
+  <li><b>Suitable criteria:</b> the yardstick it’s measured against, such as IFRS</li>
+  <li><b>Sufficient &amp; appropriate evidence:</b> enough proof (quantity) of good quality (quality)</li>
+  <li><b>Assurance report:</b> the written opinion, such as the auditor’s report</li></ol>
+  <div class="tip"><b>Exam tip:</b> ICAN often asks you to list and explain these. Learn the salient points word for word, then explain each one in your own words.</div>`;
+ case 3:case 7:{const q=QUIZ[a.key];const ans=S.quiz[a.key];
+  return `${h}<p><b>${q.q}</b></p>${q.opts.map((o,k)=>{let c='';if(ans!=null){if(o[1])c='right';else if(k===ans)c='wrong'}return `<button class="opt ${c}" ${ans!=null?'disabled':''} data-quiz="${a.key}" data-k="${k}"><span class="lbl"><span>${o[0]}</span>${ans!=null&&o[1]?I.check:''}</span></button>`}).join('')}
+  ${ans!=null?`<div class="feedback ${q.opts[ans][1]?'ok':'no'}">${q.opts[ans][2]}${q.opts[ans][1]?'':`<br><br><b>The right answer:</b> ${q.opts.find(o=>o[1])[0]}`}</div>`:''}`;}
+ case 5:{const m=S.match;
+  return `${h}<p><b>Scenario:</b> Adire Fabrics Ltd is owned by 200 shareholders. Its directors prepare the year-end financial statements under IFRS, and Okafor &amp; Co. Chartered Accountants are hired to audit them.</p><p>Match each item to the element it represents.</p>
+  ${MATCH.map((r,k)=>{const v=m?m.answers[k]:'';const ok=m&&v===r[1];return `<div class="match-row"><span class="small" style="font-size:15.5px">${r[0]}</span><select data-m="${k}" ${m?'disabled':''}><option value="">Choose…</option>${ELEMENTS.map(e=>`<option ${v===e?'selected':''}>${e}</option>`).join('')}</select><span style="color:${ok?'var(--good)':'var(--bad)'}">${m?(ok?I.check:'✕'):''}</span></div>`}).join('')}
+  ${m?`<div class="feedback ${m.correct===MATCH.length?'ok':'no'}" style="margin-top:14px">You matched ${m.correct} of ${MATCH.length} correctly.${m.correct<MATCH.length?' Corrections: '+MATCH.filter((r,k)=>m.answers[k]!==r[1]).map(r=>`<b>${r[1]}</b> = ${r[0].split(',')[0].split(' who')[0]}`).join('; ')+'.':' Excellent: you can spot all five elements.'}</div><button class="btn ghost" style="margin-top:12px" data-retry-match>Try again</button>`:`<button class="btn" style="margin-top:16px" data-check-match>Check my answers</button>`}`;}
+ case 6:return `${h}<p>Auditors don’t only report on financial statements. Your notes highlight two other areas.</p>
+  <p><b>1. Opinions on other information in the annual report.</b> Your notes call these <i>non-assurance engagements</i>. Examples:</p>
+  <ul><li>Corporate Social Responsibility (CSR) report</li><li>Environmental Impact Assessment report</li><li>Employment policy</li><li>Non-financial performance indicators (NFPIs)</li></ul>
+  <p><b>2. Audit-related engagements:</b> work an accountant does that is related to, but not the same as, an audit:</p>
+  <ul><li><b>Review of data:</b> checking information someone else prepared</li><li><b>Agreed-upon procedures:</b> the client chooses the checks, and the accountant reports what they found</li><li><b>Compilation:</b> the accountant prepares the information themselves</li></ul>
+  <div class="keyidea">You’ll study these properly in Chapters 11 and 12. For now, just know they exist and how they differ.</div>`;
+ case 8:{const mine=S.posts;
+  return `${h}<p>Your friend says: <i>“Why waste money on auditors? The directors already prepared the accounts.”</i></p><p><b>In 2 or 3 sentences, how would you reply?</b> Use what you learned about ownership, stewardship and assurance.</p>
+  <textarea id="explain" placeholder="Type your answer…"></textarea>
+  <div class="row" style="margin:12px 0 24px"><button class="btn" data-post>Post to group wall</button><span class="small muted">Sharing is optional. You can continue without posting.</span></div>
+  <div class="eyebrow" style="margin-bottom:10px">Group wall · AAAF cohort</div>
+  ${[...mine.map(p=>({...p,init:'SE',name:LEARNER+' (you)',when:'just now',likes:0})),...SAMPLE_POSTS].map(p=>`<div class="post"><div class="row" style="margin-bottom:8px"><div class="avatar">${p.init}</div><div><b class="small">${esc(p.name)}</b><div class="small muted">${p.when}</div></div></div><div style="font-size:15.5px">${esc(p.text)}</div><button class="like ${S.likes[p.id]?'on':''}" data-like="${p.id}">♥ ${p.likes+(S.likes[p.id]?1:0)}</button></div>`).join('')}`;}
+ case 9:{const pv=S.poll;
+  return `${h}<ul><li><b>Assurance:</b> a practitioner, engaged by one party, gives an opinion on information prepared by another party.</li>
+  <li><b>Why audits exist:</b> ownership (shareholders) and stewardship (directors) are separate, so owners need an independent opinion.</li>
+  <li><b>What an audit gives:</b> a high, not absolute, level of assurance that the financial statements are prepared in all material respects under a framework such as IFRS.</li>
+  <li><b>The 5 elements:</b> three parties, subject matter, suitable criteria, sufficient &amp; appropriate evidence, and a report. <i>3 people, 3 S’s, 1 report.</i></li>
+  <li><b>Other work:</b> opinions on other annual report information, plus review, agreed-upon procedures and compilation.</li></ul>
+  <div class="keyidea">Back to the opening poll: most of the cohort (41%) said an audit is mainly for catching fraud. The answer the course supports is <b>“an independent opinion on whether the accounts are fair”</b>${pv===1?', which is what you picked. Well done.':pv!=null?'. You’re not alone in thinking otherwise.':'.'} The gap between what the public expects of auditors and what they actually do has a name: the <b>expectation gap</b>. You’ll meet it in Chapter 4.</div>
+  <p style="margin-top:18px"><b>What’s next:</b> Chapter 2, The Regulatory Environment. Who appoints, removes and regulates auditors in Nigeria under CAMA 2020?</p>
+  <button class="btn block" data-finish>${S.finished?'Session complete ✓ Back to chapter':'Finish session'}</button>`;}
+ }
+}
+
+function vPlay(){
+ const a=SESSION.acts[step];const n=SESSION.acts.length;
+ return `<div class="player">
+ <div class="p-top"><button class="btn ghost" data-go="session">${I.left} Back</button><div style="text-align:center"><div class="eyebrow">Session 1 · Activity ${step+1} of ${n}</div><b class="small">${SESSION.title}</b></div><span style="width:80px"></span></div>
+ <div class="tools">
+  <button class="tool" title="My notes" data-drawer="notes">${I.note}</button>
+  <button class="tool" title="Ask Grolite (AI tutor)" data-drawer="ai" style="color:#a78bfa">${I.spark}</button>
+  ${['read','recap'].includes(a.type)?`<button class="tool" id="listen" title="Listen" data-listen>${I.sound}</button>`:''}
+ </div>
+ <div class="p-card"><div class="p-head"><span class="pill t-${a.type}">${TAGNAME[a.type]} · ${a.min} min</span></div>
+ <div class="p-body" id="pbody">${actBody(a,step)}</div></div>
+ </div>
+ <div class="p-foot"><div class="inner"><div class="row" style="justify-content:center;gap:16px">
+  <button class="navbtn" data-prev ${step===0?'disabled':''}>${I.left}</button>
+  <button class="navbtn primary" data-next ${step===n-1?'disabled':''}>${I.right}</button></div>
+  <div class="segs">${SESSION.acts.map((_,i)=>`<i class="${i===step?'cur':S.done[i]?'done':''}"></i>`).join('')}</div></div></div>`;
+}
+
+function vPlanner(){
+ const pn=planNumbers();
+ return `<div class="wrap"><h1>Study Plan</h1><p class="sub">Your exam starts in ${daysLeft()} days. Change anything below and the plan updates live.</p>
+ <div class="card" style="margin-bottom:16px"><div class="grid3" style="text-align:center">
+  <div><div class="eyebrow">Hours you have</div><div class="stat">${pn.avail}h</div></div>
+  <div><div class="eyebrow">Hours your papers need</div><div class="stat">${pn.req}h</div></div>
+  <div><div class="eyebrow">${pn.short?'Short by':'Spare time'}</div><div class="stat" style="color:${pn.short?'var(--bad)':'var(--good)'}">${pn.short||(pn.avail-pn.req).toFixed(1)}h</div></div></div>
+  <div style="margin-top:18px" class="${pn.short?'warn-box':'good-box'}">${pn.short?`This is tight. You’re aiming for ${S.plan.hours}h a day; about ${pn.need}h a day would keep you on track. Consider studying more days, or sitting fewer papers.`:`You’re on track. ${pn.studyDays} study days at ${S.plan.hours}h covers everything.`}</div>
+  <details style="margin-top:14px"><summary class="small" style="cursor:pointer;color:var(--accent);font-weight:700">How is this worked out?</summary><p class="small muted">Hours you have = ${pn.studyDays} study days (${daysLeft()} days × ${S.plan.days} days a week) × ${S.plan.hours}h. Hours needed = recommended hours for each paper you selected, adjusted for your reading pace (${S.plan.pace}), minus time you’ve already spent learning in Grolite. Paper hours are demo estimates.</p></details></div>
+ <div class="card" style="margin-bottom:16px"><div class="eyebrow" style="margin-bottom:10px">Suggested this week · adapts as you learn</div>
+  ${[['AAAF','Ch 1: Meaning of Audit and Assurance · Session 1',S.finished?'Done':'Today'],['AAAF','Ch 2: Laws and Regulations on Audit and Assurance','Tomorrow'],['CS','Case Study practice: past question 1','Wed'],['AAAF','Revision quiz: Ch 1','Fri (spaced revision)']].map(r=>`<div class="row between" style="padding:10px 0;border-bottom:1px solid var(--line)"><div class="small"><b style="color:var(--accent)">${r[0]}</b> · ${r[1]}</div><span class="chip ${r[2]==='Done'?'':'muted'}">${r[2]}</span></div>`).join('')}</div>
+ <div class="card"><div class="eyebrow" style="margin-bottom:14px">Your details</div>
+  <label class="small muted">Exam date</label><input type="date" id="exam" value="${S.plan.exam}" style="margin:6px 0 18px">
+  <div class="grid2"><div><label class="small muted">Daily study hours</label><div class="stepper" style="margin:8px 0 18px"><button data-h="-0.5">−</button><b style="font-size:22px">${S.plan.hours}h</b><button data-h="0.5">+</button></div></div>
+  <div><label class="small muted">Study days per week</label><div class="stepper" style="margin:8px 0 18px"><button data-d="-1">−</button><b style="font-size:22px">${S.plan.days}</b><button data-d="1">+</button></div></div></div>
+  <label class="small muted">Reading pace</label><div style="margin:8px 0 14px">${['Fast','Average','Takes time'].map(p=>`<button class="pchip ${S.plan.pace===p?'on':''}" data-pace="${p}">${p}</button>`).join('')}</div>
+  <label class="small muted">Papers this sitting</label><div style="margin-top:8px">${Object.keys(PAPERS).map(c=>`<button class="pchip ${S.plan.papers.includes(c)?'on':''}" data-paper="${c}">${c}</button>`).join('')}</div></div></div>`;
+}
+
+function vProgress(){
+ const pn=planNumbers();const qs=quizScore();const active=doneCount()>0;
+ const streak=3+(active?1:0);
+ let cells='';const days=91;
+ for(let d=days-1;d>=0;d--){let l=0;if(d===0)l=active?Math.min(4,1+Math.floor(doneCount()/3)):0;else{const r=Math.abs(Math.sin(d*12.9898)*43758.5)%1;l=d<4?2+Math.round(r):r>.55?Math.ceil(r*4)-1:0}cells+=`<i class="${l?'l'+l:''}" title="${d===0?'Today':d+' days ago'}"></i>`}
+ const log=logEntries();
+ return `<div class="wrap"><h1>Progress</h1><p class="sub">How exam-ready you are, and how consistent you’ve been.</p>
+ <div class="grid2" style="margin-bottom:16px">
+  <div class="card"><div class="eyebrow">Exam-readiness forecast</div><div class="row" style="align-items:baseline;gap:10px"><span style="font-size:48px;font-weight:800">${pn.ready}%</span><span class="muted">ready by exam day</span></div><p class="small muted" style="margin:0">If you keep to ${S.plan.hours}h a day, ${S.plan.days} days a week.</p></div>
+  <div class="card"><div class="eyebrow">Practice accuracy</div><div class="row" style="align-items:baseline;gap:10px"><span style="font-size:48px;font-weight:800">${qs==null?'–':qs+'%'}</span><span class="muted">${qs==null?'answer a quiz to see this':'on quizzes and try-its'}</span></div><p class="small muted" style="margin:0">Earned from real answers in your sessions, not self-ticks.</p></div></div>
+ <div class="grid3" style="margin-bottom:16px">
+  <div class="card"><div class="eyebrow">Streak</div><div class="stat">${streak} days</div></div>
+  <div class="card"><div class="eyebrow">Learned today</div><div class="stat">${S.minutes||0} min</div></div>
+  <div class="card"><div class="eyebrow">Activities done</div><div class="stat">${doneCount()}/${SESSION.acts.length}</div></div></div>
+ <div class="card" style="margin-bottom:16px"><div class="eyebrow">Study heatmap · last 13 weeks</div><p class="small muted">Darker means more time that day. Earlier days are sample data.</p><div class="heat">${cells}</div></div>
+ <div class="card" style="margin-bottom:16px"><div class="eyebrow" style="margin-bottom:12px">Readiness by paper</div>
+  ${S.plan.papers.map(c=>{const t=paperTracks(c);const weak=Object.entries(t).sort((a,b)=>a[1]-b[1])[0][0];return `<div style="margin-bottom:16px"><b style="color:var(--accent)">${c}</b> <span class="small muted">${PAPERS[c].name}</span>${['read','practice','revision'].map(k=>`<div class="row small" style="margin-top:6px"><span style="width:70px" class="muted">${k[0].toUpperCase()+k.slice(1)}</span><div class="bar" style="flex:1"><i style="width:${t[k]}%"></i></div><b style="width:36px;text-align:right">${t[k]}%</b>${k===weak?'<span style="color:var(--warn);font-weight:700;width:40px">weak</span>':'<span style="width:40px"></span>'}</div>`).join('')}</div>`}).join('')}</div>
+ <div class="card"><div class="eyebrow">Activity log</div><p class="small muted" style="margin:4px 0 0">Open an entry to see exactly what you did.</p>${log.map(logHTML).join('')}</div></div>`;
+}
+
+/* ---------- activity log ---------- */
+let openLog={s1:true};
+const words=t=>(t||'').trim().split(/\s+/).filter(Boolean).length;
+function logEntries(){
+ const out=[];const n=SESSION.acts.length;const dc=doneCount();
+ if(dc>0){
+  const detail=i=>{switch(SESSION.acts[i].type){
+   case 'poll':return S.poll!=null?`Voted: “${POLL.opts[S.poll]}”`:'Not answered yet';
+   case 'quiz':{const k=SESSION.acts[i].key,a=S.quiz[k];if(a==null)return 'Not answered yet';const o=QUIZ[k].opts[a];return o[1]?`Answered correctly: “${o[0]}”`:`Answered “${o[0]}” (incorrect, then saw the explanation)`}
+   case 'try':return S.match?`Matched ${S.match.correct} of ${MATCH.length} elements correctly`:'Not attempted yet';
+   case 'explain':return S.posts.length?`Posted to group wall (${words(S.posts[0].text)} words): “${S.posts[0].text.slice(0,140)}${S.posts[0].text.length>140?'…':''}”`:(S.done[i]?'Completed without posting':'Not done yet');
+   default:return S.done[i]?(SESSION.acts[i].type==='recap'?'Reviewed key takeaways':'Read in full'):'Not read yet';}};
+  const qs=quizScore();
+  out.push({id:'s1',when:'Today',paper:'AAAF',title:S.finished?'Finished AAAF Ch 1 · Session 1: What Is Assurance?':'AAAF Ch 1 · Session 1: What Is Assurance?',mins:S.minutes||0,done:dc,total:n,
+   metrics:[[I.note,'#6b55c2',words(S.posts.map(p=>p.text).join(' ')+' '+S.notes),'Words written'],[I.check,'#1f7a52',qs==null?'–':qs+'%','Quiz accuracy'],[I.spark,'#2c5f66',S.posts.length,'Answers shared'],[I.book,'#b44a5d',`${dc}/${n}`,'Activities done'],[I.plan,'#8a6d2b',`${S.minutes||0}m`,'Time learning']],
+   items:SESSION.acts.map((a,i)=>({type:a.type,title:a.title,detail:detail(i),done:!!S.done[i]}))});
+ }
+ out.push({id:'c1',when:'3 days ago',paper:'CS',title:'CS · Case Study practice: past question 1',mins:45,done:4,total:4,sample:true,
+  metrics:[[I.note,'#6b55c2',312,'Words written'],[I.check,'#1f7a52','70%','Marking score'],[I.spark,'#2c5f66',1,'Answers shared'],[I.book,'#b44a5d','4/4','Activities done'],[I.plan,'#8a6d2b','45m','Time learning']],
+  items:[{type:'read',title:'Read the case brief',detail:'Read in full',done:true},{type:'quiz',title:'Spot the key issues',detail:'Identified 4 of 5 key issues',done:true},{type:'explain',title:'Draft your answer outline',detail:'Wrote a 312-word outline and shared it with the group',done:true},{type:'recap',title:'Compare with the marking guide',detail:'Self-marked 14 of 20',done:true}]});
+ out.push({id:'c2',when:'4 days ago',paper:'CS',title:'CS · Reading: How to approach a case study',mins:60,done:3,total:3,sample:true,
+  metrics:[[I.note,'#6b55c2',0,'Words written'],[I.check,'#1f7a52','100%','Quiz accuracy'],[I.spark,'#2c5f66',0,'Answers shared'],[I.book,'#b44a5d','3/3','Activities done'],[I.plan,'#8a6d2b','60m','Time learning']],
+  items:[{type:'read',title:'What examiners look for',detail:'Read in full',done:true},{type:'read',title:'Structuring your report',detail:'Read in full',done:true},{type:'quiz',title:'Quiz: Report structure',detail:'Answered 3 of 3 correctly',done:true}]});
+ return out;
+}
+function logHTML(e){
+ const pct=Math.round(e.done/e.total*100);const open=!!openLog[e.id];
+ return `<div class="log ${open?'open':''}"><button class="log-h" data-log="${e.id}">
+  <span class="log-ic ${pct===100?'full':''}">${pct===100?I.check:badge(e.paper,22)}</span>
+  <span><span class="small muted">${e.when} · ${e.mins} min</span><b style="display:block">${esc(e.title)}</b><span class="small muted">${e.total} activities · ${e.done}/${e.total} done</span><div class="bar" style="margin-top:8px;height:6px"><i style="width:${pct}%;background:var(--good)"></i></div></span>
+  <b style="color:${pct===100?'var(--good)':'var(--text)'}">${pct}%</b><span class="chev">▾</span></button>
+  ${open?`<div class="log-body">${e.sample?'<div class="small muted" style="margin-bottom:10px">Sample history for the demo.</div>':''}
+   <div class="eyebrow" style="margin-bottom:10px">Activity metrics</div>
+   <div class="metrics">${e.metrics.map(m=>`<div class="metric"><div class="mi" style="background:${m[1]}33;color:${m[1]}">${m[0]}</div><b>${m[2]}</b><span>${m[3]}</span></div>`).join('')}</div>
+   <div class="eyebrow" style="margin-bottom:4px">What you did</div>
+   ${e.items.map((it,k)=>`<div class="li"><span class="dot ${it.done?'on':''}"></span><span class="tg t-${it.type}">${TAGNAME[it.type]}</span><div><b style="font-size:15px">${k+1}. ${esc(it.title)}</b><div class="small muted">${esc(it.detail)}</div></div></div>`).join('')}
+   ${e.id==='s1'?`<button class="btn ghost" style="margin-top:12px" data-go="session">Open this session</button>`:''}</div>`:''}</div>`;
+}
+
+function vSettings(){
+ return `<div class="wrap"><h1>Settings</h1><p class="sub">Demo controls.</p>
+ <div class="card stack"><div class="row between"><div><b>Theme</b><div class="small muted">Switch between dark and light.</div></div><button class="btn ghost" data-theme>${I.sun} Toggle theme</button></div>
+ <div class="row between"><div><b>Reset demo</b><div class="small muted">Clears progress, answers and posts so you can present it fresh.</div></div><button class="btn ghost" data-reset>Reset</button></div>
+ <div class="small muted">Grolite demo · lesson content adapted from AAA study notes (Chapter 1) for demonstration only. All students, cohort numbers and other papers’ data are sample data.</div></div></div>`;
+}
+
+/* ---------------- drawer: notes + AI tutor ---------------- */
+const AI={
+ 'Explain assurance like I’m new to this':'Think of assurance as a trusted second opinion. Someone else prepared some information (the directors prepared the accounts). You hire an independent expert (the auditor) to check it and tell you whether you can rely on it. That opinion gives you comfort, which is what “assurance” means.',
+ 'What’s the difference between an audit and a review?':'An audit gives a high level of assurance and involves detailed testing. A review of data involves less work and gives a moderate (limited) level of assurance. You’ll go deeper in Chapter 11.',
+ 'Give me a memory trick for the 5 elements':'Try “3 people, 3 S’s, 1 report”. The 3 people are the practitioner, responsible party and intended user. The 3 S’s are Subject matter, Suitable criteria and Sufficient & appropriate evidence. Then 1 assurance report.'
+};
+let chat=[];
+function openDrawer(kind){
+ const d=document.getElementById('drawer');
+ if(kind==='courses'){d.innerHTML=`<div class="row between"><h2 style="margin:0">Add a course</h2><button class="navbtn" data-close>${I.x}</button></div>
+  <div class="small muted">Courses you sign up for appear as learner workspaces in your sidebar, and their hours are added to your Study Plan.</div>
+  <div style="overflow:auto">${Object.keys(PAPERS).map(k=>`<div class="course-row">${badge(k,36)}<div style="flex:1"><b>${k}</b><div class="small muted">${PAPERS[k].name} · ~${PAPERS[k].hours}h</div></div>${S.plan.papers.includes(k)?'<span class="chip">Enrolled ✓</span>':`<button class="btn" data-enroll="${k}">Enroll</button>`}</div>`).join('')}</div>`;d.classList.add('open');return}
+ if(kind==='notes'){d.innerHTML=`<div class="row between"><h2 style="margin:0">My notes</h2><button class="navbtn" data-close>${I.x}</button></div><div class="small muted">AAAF · Ch 1: Meaning of Audit and Assurance</div><textarea id="notes" style="flex:1" placeholder="Jot down tricky bits, definitions, memory tricks…">${esc(S.notes)}</textarea><div class="small muted">Saved automatically.</div>`}
+ else{d.innerHTML=`<div class="row between"><h2 style="margin:0">Ask Grolite</h2><button class="navbtn" data-close>${I.x}</button></div><div class="small muted">AI study tutor for this chapter. Demo: suggested questions have prepared answers.</div>
+  <div id="chat" style="flex:1;overflow:auto;display:flex;flex-direction:column;gap:10px">${chat.map(m=>`<div class="msg ${m[0]}">${esc(m[1])}</div>`).join('')||`<div class="msg ai">Hi ${LEARNER}. Ask me anything about Chapter 1.</div>`}</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px">${Object.keys(AI).map(q=>`<button class="suggest" data-ask="${esc(q)}">${q}</button>`).join('')}</div>
+  <div class="row"><input type="text" id="aiq" placeholder="Type a question…"><button class="btn" data-askfree>Ask</button></div>`}
+ d.classList.add('open');
+}
+function closeDrawer(){document.getElementById('drawer').classList.remove('open')}
+
+/* speech */
+function stopSpeech(){try{speechSynthesis.cancel()}catch(e){}const b=document.getElementById('listen');if(b)b.classList.remove('on')}
+
+/* ---------------- render + events ---------------- */
+function render(){
+ document.getElementById('side').innerHTML=sideHTML();
+ document.getElementById('mobnav').innerHTML=mobHTML();
+ if(!S.plan.papers.includes(S.ws))S.ws=S.plan.papers[0];
+ if(S.ws!=='AAAF'&&['session','play'].includes(route))route='paper';
+ document.getElementById('side').innerHTML=sideHTML();
+ const v={home:vHome,paper:vPaper,session:vSession,play:vPlay,planner:vPlanner,progress:vProgress,settings:vSettings}[route];
+ document.getElementById('main').innerHTML=(['home','paper'].includes(route)?`<div class="mob-ws wrap">${wsSwitch()}</div>`:'')+v();
+}
+function markDone(i){if(!S.done[i]){S.done[i]=true;S.minutes=(S.minutes||0)+SESSION.acts[i].min}save()}
+
+document.addEventListener('click',e=>{
+ if(wsOpen&&!e.target.closest('.ws')){wsOpen=false;render()}
+ const t=e.target.closest('button,[data-go],[data-play]');if(!t)return;const ds=t.dataset;
+ if('wsmenu' in ds){wsOpen=!wsOpen;render();return}
+ if(ds.log){openLog[ds.log]=!openLog[ds.log];render();return}
+ if(ds.ws){wsOpen=false;S.ws=ds.ws;save();go(['home','paper'].includes(route)?route:'home');toast(`Switched to ${PAPERS[ds.ws].name}`);return}
+ if('addcourse' in ds){wsOpen=false;render();openDrawer('courses');return}
+ if(ds.enroll){S.plan.papers.push(ds.enroll);S.ws=ds.enroll;save();go('home');toast(`Enrolled in ${PAPERS[ds.enroll].name}`);return}
+ if(ds.go){if(ds.go==='continue'&&S.ws!=='AAAF'){go('paper');return}
+  if(ds.go==='continue'){const first=SESSION.acts.findIndex((_,i)=>!S.done[i]);go('play',first<0?SESSION.acts.length-1:first)}else go(ds.go);return}
+ if(ds.play!=null){go('play',+ds.play);return}
+ if('next' in ds){if(['read','recap'].includes(SESSION.acts[step].type))markDone(step);go('play',step+1);return}
+ if('prev' in ds){go('play',step-1);return}
+ if(ds.poll!=null){S.poll=+ds.poll;markDone(0);render();return}
+ if(ds.quiz){S.quiz[ds.quiz]=+ds.k;markDone(step);render();if(QUIZ[ds.quiz].opts[+ds.k][1])toast('Correct! Nice work.');return}
+ if('checkMatch' in ds){const answers=MATCH.map((_,k)=>document.querySelector(`[data-m="${k}"]`).value);if(answers.some(a=>!a)){toast('Match every item first.');return}
+  S.match={answers,correct:answers.filter((a,k)=>a===MATCH[k][1]).length};markDone(5);render();return}
+ if('retryMatch' in ds){S.match=null;render();return}
+ if('post' in ds){const v=document.getElementById('explain').value.trim();if(!v){toast('Write your answer first.');return}S.posts.unshift({id:'u'+Date.now(),text:v});markDone(8);render();toast('Posted to your group wall');return}
+ if(ds.like){S.likes[ds.like]=!S.likes[ds.like];save();render();return}
+ if('finish' in ds){markDone(9);SESSION.acts.forEach((_,i)=>{if(!S.done[i])S.done[i]=true});S.finished=true;save();go('session');toast('Session complete! Ch 1 marked as read automatically.');return}
+ if(ds.drawer){openDrawer(ds.drawer);return}
+ if('close' in ds){closeDrawer();return}
+ if(ds.ask){chat.push(['me',ds.ask],['ai',AI[ds.ask]]);openDrawer('ai');return}
+ if('askfree' in ds){const q=document.getElementById('aiq').value.trim();if(!q)return;chat.push(['me',q],['ai','In the full product, this connects to an AI tutor grounded in your study material and reviewed by an accountant. In this demo, try one of the suggested questions.']);openDrawer('ai');return}
+ if('listen' in ds){if(speechSynthesis.speaking){stopSpeech();return}const txt=document.getElementById('pbody').innerText;const u=new SpeechSynthesisUtterance(txt);u.rate=.98;u.onend=()=>t.classList.remove('on');speechSynthesis.speak(u);t.classList.add('on');return}
+ if(ds.h){S.plan.hours=Math.min(14,Math.max(1,S.plan.hours+ +ds.h));save();render();return}
+ if(ds.d){S.plan.days=Math.min(7,Math.max(1,S.plan.days+ +ds.d));save();render();return}
+ if(ds.pace){S.plan.pace=ds.pace;save();render();return}
+ if(ds.paper){const p=S.plan.papers;const i=p.indexOf(ds.paper);if(i>=0){if(p.length===1){toast('Keep at least one paper.');return}p.splice(i,1)}else p.push(ds.paper);save();render();return}
+ if('theme' in ds){const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark');S.theme=cur==='light'?'dark':'light';document.documentElement.dataset.theme=S.theme;save();return}
+ if('reset' in ds){const th=S.theme;S=DEFAULT();S.theme=th;const d=new Date(today);d.setDate(d.getDate()+27);S.plan.exam=d.toISOString().slice(0,10);chat=[];save();go('home');toast('Demo reset');return}
+});
+document.addEventListener('input',e=>{
+ if(e.target.id==='notes'){S.notes=e.target.value;save()}
+ if(e.target.id==='exam'&&e.target.value){S.plan.exam=e.target.value;save();render()}
+});
+document.addEventListener('keydown',e=>{
+ if(e.target.id==='aiq'&&e.key==='Enter'){document.querySelector('[data-askfree]').click()}
+ if(route==='play'&&!['TEXTAREA','INPUT','SELECT'].includes(e.target.tagName)){if(e.key==='ArrowRight'&&step<SESSION.acts.length-1)document.querySelector('[data-next]').click();if(e.key==='ArrowLeft'&&step>0)go('play',step-1)}
+});
+render();
+</script>
+</body>
+</html>
